@@ -28,7 +28,7 @@ public class ProductController {
 
     // 參數需加上@Valid，才能使ProductRequest資料欄位中的@NotNull生效
     @PostMapping("/products")
-    public  ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
         // 回傳auto_increment的id
         Integer productId = productService.createProduct(productRequest);
 
@@ -36,5 +36,22 @@ public class ProductController {
 
         // 回傳created結果
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+
+        // 先查詢是否有id為productId的資料
+        Product product = productService.getProductById(productId);
+
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // 修改商品數據
+        productService.updateProduct(productId, productRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(productId));
     }
 }
