@@ -1,21 +1,24 @@
 package com.ian.springbootmall.dao.impl;
 
 import com.ian.springbootmall.dao.ProductDao;
+import com.ian.springbootmall.dto.ProductRequest;
 import com.ian.springbootmall.model.Product;
 import com.ian.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ProductDaoImpl implements ProductDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     @Override
     public Product getProductById(Integer productId) {
 
@@ -32,5 +35,36 @@ public class ProductDaoImpl implements ProductDao {
         } else {
             return productList.get(0);
         }
+    }
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
+
+        String sql = "INSERT INTO product(product_name, category, image_url, " +
+                "price, stock, description, created_date, last_modified_date) " +
+                "VALUES (:productName, :category, :imageUrl, :price, :stock, " +
+                ":description, :createdDate, :lastModifiedDate)";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("productName", productRequest.getProductName());
+        map.put("category", productRequest.getCategory().toString());  // Enum類型記得要轉換為string
+        map.put("imageUrl", productRequest.getImageUrl());
+        map.put("price", productRequest.getPrice());
+        map.put("stock", productRequest.getStock());
+        map.put("description", productRequest.getDescription());
+
+        Date now = new Date();
+        map.put("createdDate", now);
+        map.put("lastModifiedDate", now);
+
+        // 儲存自動生成的id
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        // SQL查詢或新增參數較多、類型較複雜，或需要動態添加參數時，建議使用 MapSqlParameterSource。
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
+
+        int productId = Objects.requireNonNull(keyHolder.getKey()).intValue();
+
+        return productId;
     }
 }
