@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -44,17 +45,7 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
-        // 加入category去搜索資料
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name()); // enum類型需使用name()去取得string
-        }
-
-        // 根據用戶的搜尋關鍵字去搜索資料
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // %用於模糊查詢
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 設定排列的依據，只能透過string的拼接實現，不能利用map
         sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
@@ -132,20 +123,29 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
-        // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 利用queryForObject，並將值直接轉成Integer.class
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
         return total;
+    }
+
+    // 設定sql的查詢條件
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+
+        // 加入category去搜索資料
+        if (productQueryParams.getCategory() != null) {
+            sql += " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name()); // enum類型需使用name()去取得string
+        }
+
+        // 根據用戶的搜尋關鍵字去搜索資料
+        if (productQueryParams.getSearch() != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // %用於模糊查詢
+        }
+
+        return sql;
     }
 }
