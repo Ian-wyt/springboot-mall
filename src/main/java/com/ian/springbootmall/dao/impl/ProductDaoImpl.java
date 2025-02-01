@@ -59,6 +59,9 @@ public class ProductDaoImpl implements ProductDao {
         // 設定排列的依據，只能透過string的拼接實現，不能利用map
         sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
 
+        // 設定回傳的筆數及跳過多少數據
+        sql += " LIMIT " + productQueryParams.getLimit() + " OFFSET " + productQueryParams.getOffset();
+
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         return productList;
