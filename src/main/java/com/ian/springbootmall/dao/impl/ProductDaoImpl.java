@@ -1,7 +1,7 @@
 package com.ian.springbootmall.dao.impl;
 
-import com.ian.springbootmall.constant.ProductCategory;
 import com.ian.springbootmall.dao.ProductDao;
+import com.ian.springbootmall.dto.ProductQueryParams;
 import com.ian.springbootmall.dto.ProductRequest;
 import com.ian.springbootmall.model.Product;
 import com.ian.springbootmall.rowmapper.ProductRowMapper;
@@ -38,22 +38,22 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         // WHERE 1=1 能讓sql更加自由地拼接查詢情況
         String sql = "SELECT * FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
 
         // 加入category去搜索資料
-        if (category != null) {
+        if (productQueryParams.getCategory() != null) {
             sql += " AND category = :category";
-            map.put("category", category.name()); // enum類型需使用name()去取得string
+            map.put("category", productQueryParams.getCategory().name()); // enum類型需使用name()去取得string
         }
 
         // 根據用戶的搜尋關鍵字去搜索資料
-        if (search != null) {
+        if (productQueryParams.getSearch() != null) {
             sql += " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%"); // %用於模糊查詢
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // %用於模糊查詢
         }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
