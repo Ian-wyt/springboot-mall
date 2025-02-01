@@ -21,13 +21,12 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product getProductById(Integer productId) {
-
         String sql = "SELECT * FROM product WHERE product_id = :productId";
 
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
 
-
+        //  RowMapper：將資料庫查詢出來的數據轉換成Java Object
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         if (productList.isEmpty()) {
@@ -38,8 +37,16 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public Integer createProduct(ProductRequest productRequest) {
+    public List<Product> getProducts() {
+        String sql = "SELECT * FROM product";
 
+        List<Product> productList = namedParameterJdbcTemplate.query(sql, new ProductRowMapper());
+
+        return productList;
+    }
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
         String sql = "INSERT INTO product(product_name, category, image_url, " +
                 "price, stock, description, created_date, last_modified_date) " +
                 "VALUES (:productName, :category, :imageUrl, :price, :stock, " +
@@ -70,7 +77,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void updateProduct(Integer productId, ProductRequest productRequest) {
-
         String sql = "UPDATE product SET product_name = :productName, category = :category, " +
                 "image_url = :imageUrl, price = :price, stock = :stock, description = :description, " +
                 "last_modified_date = :lastModifiedDate WHERE product_id = :productId";
@@ -90,7 +96,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void deleteProductById(Integer productId) {
-
         String sql = "DELETE FROM product WHERE product_id = :productId";
 
         Map<String, Object> map = new HashMap<>();

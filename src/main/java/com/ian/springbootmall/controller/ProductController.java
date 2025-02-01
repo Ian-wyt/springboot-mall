@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
@@ -24,6 +26,14 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(product);
         }
+    }
+
+    // 查詢所有商品列表
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+        List<Product> productList = productService.getProducts();
+
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 
     // 參數需加上@Valid，才能使ProductRequest資料欄位中的@NotNull生效
