@@ -1,6 +1,5 @@
 package com.ian.springbootmall.service.impl;
 
-import com.ian.springbootmall.constant.ProductCategory;
 import com.ian.springbootmall.dao.ProductDao;
 import com.ian.springbootmall.dto.ProductQueryParams;
 import com.ian.springbootmall.dto.ProductRequest;
