@@ -1,7 +1,6 @@
 package com.ian.springbootmall.dao.impl;
 
 import com.ian.springbootmall.dao.UserDao;
-import com.ian.springbootmall.dto.UserLoginRequest;
 import com.ian.springbootmall.dto.UserRegisterRequest;
 import com.ian.springbootmall.model.User;
 import com.ian.springbootmall.rowmapper.UserRowMapper;
@@ -22,7 +21,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserById(Integer userId) {
-        String sql = "SELECT user_id, email, password, created_date, last_modified_date FROM user WHERE user_id=:user_id";
+        String sql = "SELECT user_id, email, password, created_date, last_modified_date FROM `user` WHERE user_id=:user_id";
 
         Map<String, Object> map = new HashMap<>();
         map.put("user_id", userId);
@@ -38,7 +37,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByEmail(String email) {
-        String sql = "SELECT user_id, email, password, created_date, last_modified_date FROM user WHERE email=:email";
+        String sql = "SELECT user_id, email, password, created_date, last_modified_date FROM `user` WHERE email=:email";
 
         Map<String, Object> map = new HashMap<>();
         map.put("email", email);
@@ -54,7 +53,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
-        String sql = "INSERT INTO user(email, password, created_date, last_modified_date) " +
+        String sql = "INSERT INTO `user`(email, password, created_date, last_modified_date) " +
                 "VALUES (:email, :password, :created_date, :last_modified_date)";
 
         Map<String, Object> map = new HashMap<>();
