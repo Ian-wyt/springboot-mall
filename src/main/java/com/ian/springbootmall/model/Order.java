@@ -8,8 +8,8 @@ public class Order {
     private Integer orderId;
     private Integer userId;
     private Integer totalCost;
-    private Date createdTime;
-    private Date lastModifiedTime;
+    private Date createdDate;
+    private Date lastModifiedDate;
 
     private List<OrderItem> orderItems;
 
@@ -37,20 +37,20 @@ public class Order {
         this.totalCost = totalCost;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Date getLastModifiedTime() {
-        return lastModifiedTime;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setLastModifiedTime(Date lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
 
