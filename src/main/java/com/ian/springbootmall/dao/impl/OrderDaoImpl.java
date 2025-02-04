@@ -1,6 +1,7 @@
 package com.ian.springbootmall.dao.impl;
 
 import com.ian.springbootmall.dao.OrderDao;
+import com.ian.springbootmall.dto.OrderQueryParams;
 import com.ian.springbootmall.model.Order;
 import com.ian.springbootmall.model.OrderItem;
 import com.ian.springbootmall.rowmapper.OrderItemRowMapper;
@@ -38,7 +39,28 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<OrderItem> getOrderItemsById(Integer orderId) {
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_cost, created_date, last_modified_date " +
+                "FROM `order` WHERE user_id = :userId ";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", orderQueryParams.getUserId());
+
+        // sorting
+        sql = sql + " ORDER BY created_date DESC";
+
+        // pagination
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
         String sql = "SELECT oi.order_item_id, oi.order_id, oi.product_id, oi.quantity, oi.cost, " +
                 "p.product_name, p.image_url, p.price FROM order_item as oi " +
                 "LEFT JOIN product as p ON oi.product_id = p.product_id " +
@@ -54,6 +76,16 @@ public class OrderDaoImpl implements OrderDao {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer countOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT count(*) FROM `order` WHERE user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", orderQueryParams.getUserId());
+
+        return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
     }
 
     @Override
