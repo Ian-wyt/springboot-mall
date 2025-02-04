@@ -3,7 +3,6 @@ package com.ian.springbootmall.service;
 import com.ian.springbootmall.dto.OrderQueryParams;
 import com.ian.springbootmall.dto.OrderRequest;
 import com.ian.springbootmall.model.Order;
-import com.ian.springbootmall.model.OrderItem;
 
 import java.util.List;
 
