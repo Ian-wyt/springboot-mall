@@ -5,6 +5,8 @@ import com.ian.springbootmall.dto.OrderRequest;
 import com.ian.springbootmall.model.Order;
 import com.ian.springbootmall.service.OrderService;
 import com.ian.springbootmall.util.Page;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "Order Controller", description = "訂單新增查詢相關的 API")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
+    @Operation(summary = "取得用戶訂單", description = "取得用戶的所有訂單資料")
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<Page<Order>> getOrders(
             @PathVariable Integer userId,
@@ -50,6 +54,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
+    @Operation(summary = "建立用戶訂單", description = "建立一筆用戶的訂單")
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<Order> createOrder(@PathVariable Integer userId,
                                              @RequestBody @Valid OrderRequest orderRequest) {
