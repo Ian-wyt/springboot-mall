@@ -9,7 +9,7 @@ public class User {
     private Integer userId;
     private String email;
 
-    // 轉換成json時，忽略該變數，密碼便不會回傳給前端
+    // Ignore this field when converting to JSON so the password is not returned to the client.
     @JsonIgnore
     private String password;
 

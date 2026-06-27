@@ -32,7 +32,7 @@ public class UserControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 註冊新帳號
+    // Register a new account
     @Test
     public void createUser_success() throws Exception {
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
@@ -53,12 +53,12 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
 
-        // 檢查資料庫中的密碼不為明碼
+        // Check that the password stored in the database is not plaintext.
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
         assertNotEquals(userRegisterRequest.getPassword(), user.getPassword());
     }
 
-    // 註冊新帳號 error case => email格式錯誤
+    // Register a new account error case: invalid email format
     @Test
     public void createUser_invalidEmailFormat() throws Exception {
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
@@ -76,10 +76,10 @@ public class UserControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // 註冊新帳號 error case => email已註冊過
+    // Register a new account error case: email already registered
     @Test
     public void createUser_emailAlreadyExist() throws Exception {
-        // 先註冊一個帳號
+        // Register an account first.
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
         userRegisterRequest.setEmail("test2@gmail.com");
         userRegisterRequest.setPassword("123");
@@ -94,22 +94,22 @@ public class UserControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201));
 
-        // 再次使用同個 email 註冊
+        // Register again with the same email.
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(400));
     }
 
-    // 登入
+    // Login
     @Test
     public void login_success() throws Exception {
-        // 先註冊新帳號
+        // Register a new account first.
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
         userRegisterRequest.setEmail("test3@gmail.com");
         userRegisterRequest.setPassword("123");
 
         createUser(userRegisterRequest);
 
-        // 再測試登入功能
+        // Then test login.
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(userRegisterRequest.getEmail());
         userLoginRequest.setPassword(userRegisterRequest.getPassword());
@@ -129,17 +129,17 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
-    // 登入 error case => 密碼錯誤
+    // Login error case: incorrect password
     @Test
     public void login_wrongPassword() throws Exception {
-        // 先註冊新帳號
+        // Register a new account first.
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
         userRegisterRequest.setEmail("test4@gmail.com");
         userRegisterRequest.setPassword("123");
 
         createUser(userRegisterRequest);
 
-        // 測試密碼輸入錯誤的情況
+        // Test the incorrect password case.
         UserLoginRequest userLoginRequest = new UserLoginRequest();
         userLoginRequest.setEmail(userRegisterRequest.getEmail());
         userLoginRequest.setPassword("error");
@@ -155,7 +155,7 @@ public class UserControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // 入 error case => mail尚未註冊
+    // Login error case: email has not been registered
     @Test
     public void login_emailNotExist() throws Exception {
         UserLoginRequest userLoginRequest = new UserLoginRequest();
@@ -173,7 +173,7 @@ public class UserControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // 註冊新帳號 for login測試用
+    // Register a new account for login tests.
     private void createUser(UserRegisterRequest userRegisterRequest) throws Exception {
         String json = objectMapper.writeValueAsString(userRegisterRequest);
 

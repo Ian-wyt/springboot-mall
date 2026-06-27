@@ -28,7 +28,7 @@ public class ProductControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 查詢商品 success case
+    // Query product success case
     @Test
     public void getProduct_success() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -47,7 +47,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
-    // 查詢商品 error case
+    // Query product error case
     @Test
     public void getProduct_notFound() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -57,7 +57,7 @@ public class ProductControllerTest {
                 .andExpect(status().is(404));
     }
 
-    // 創建商品 success case
+    // Create product success case
     @Transactional
     @Test
     public void createProduct_success() throws Exception {
@@ -88,7 +88,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
-    // 創建商品 error case => 新增資料有缺失
+    // Create product error case: missing required data
     @Transactional
     @Test
     public void createProduct_illegalArgument() throws Exception {
@@ -106,7 +106,7 @@ public class ProductControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // 更新商品 success case
+    // Update product success case
     @Transactional
     @Test
     public void updateProduct_success() throws Exception {
@@ -136,7 +136,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
 
-    // 更新商品 error case => 修改資料有缺失
+    // Update product error case: missing required data
     @Transactional
     @Test
     public void updateProduct_illegalArgument() throws Exception {
@@ -155,7 +155,7 @@ public class ProductControllerTest {
 
     }
 
-    // 更新商品 error case => product id 不存在
+    // Update product error case: product id does not exist
     @Transactional
     @Test
     public void updateProduct_productNotFound() throws Exception {
@@ -177,7 +177,7 @@ public class ProductControllerTest {
                 .andExpect(status().is(404));
     }
 
-    // 刪除商品 success case
+    // Delete product success case
     @Transactional
     @Test
     public void deleteProduct_success() throws Exception {
@@ -188,7 +188,7 @@ public class ProductControllerTest {
                 .andExpect(status().is(204));
     }
 
-    // 刪除商品 error case => product id 不存在
+    // Delete product error case: product id does not exist
     @Transactional
     @Test
     public void deleteProduct_deleteNonExistingProduct() throws Exception {
@@ -199,7 +199,7 @@ public class ProductControllerTest {
                 .andExpect(status().is(204));
     }
 
-    // 查詢商品列表 success case
+    // Query product list success case
     @Test
     public void getProducts() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -214,7 +214,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(5)));
     }
 
-    // 查詢商品列表關鍵字功能 success case
+    // Query product list keyword filter success case
     @Test
     public void getProducts_filtering() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -230,7 +230,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.results", hasSize(2)));
     }
 
-    // 查詢商品列表排序功能 success case
+    // Query product list sorting success case
     @Test
     public void getProducts_sorting() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -252,7 +252,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.results[4].productId", equalTo(6)));
     }
 
-    // 查詢商品列表分頁功能 success case
+    // Query product list pagination success case
     @Test
     public void getProducts_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders

@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "User Controller", description = "用戶註冊登入相關的 API")
+@Tag(name = "User Controller", description = "APIs for user registration and login")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "用戶註冊")
+    @Operation(summary = "Register user")
     @PostMapping("/users/register")
     public ResponseEntity<User> createUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         Integer userId = userService.createUser(userRegisterRequest);
@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @Operation(summary = "用戶登入")
+    @Operation(summary = "User login")
     @PostMapping("/users/login")
     public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
         User user = userService.login(userLoginRequest);

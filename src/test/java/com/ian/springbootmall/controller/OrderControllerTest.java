@@ -29,7 +29,7 @@ public class OrderControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 創建訂單
+    // Create order
     @Transactional
     @Test
     public void createOrder_success() throws Exception {
@@ -155,7 +155,7 @@ public class OrderControllerTest {
                 .andExpect(status().is(400));
     }
 
-    // 查詢訂單列表
+    // Query order list
     @Test
     public void getOrders() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders

@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "Order Controller", description = "訂單新增查詢相關的 API")
+@Tag(name = "Order Controller", description = "APIs for creating and querying orders")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @Operation(summary = "取得用戶訂單", description = "取得用戶的所有訂單資料")
+    @Operation(summary = "Get user orders", description = "Get all order data for a user")
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<Page<Order>> getOrders(
             @PathVariable Integer userId,
@@ -38,13 +38,13 @@ public class OrderController {
         orderQueryParams.setLimit(limit);
         orderQueryParams.setOffset(offset);
 
-        // 取得訂單列表
+        // Get order list
         List<Order> orderList = orderService.getOrders(orderQueryParams);
 
-        // 取得訂單總筆數
+        // Get total order count
         Integer total = orderService.countOrders(orderQueryParams);
 
-        // 設定分頁內容
+        // Set pagination content
         Page<Order> page = new Page<>();
         page.setLimit(limit);
         page.setOffset(offset);
@@ -54,7 +54,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
-    @Operation(summary = "建立用戶訂單", description = "建立一筆用戶的訂單")
+    @Operation(summary = "Create user order", description = "Create an order for a user")
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<Order> createOrder(@PathVariable Integer userId,
                                              @RequestBody @Valid OrderRequest orderRequest) {

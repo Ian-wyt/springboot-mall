@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class ProductRequest {
 
-    // id & time為自動新增
+    // id and timestamps are generated automatically.
     @NotNull
     private String productName;
 

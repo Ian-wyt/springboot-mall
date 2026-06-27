@@ -64,11 +64,11 @@ public class OrderServiceImpl implements OrderService {
         return orderList;
     }
 
-    // 操作多個資料庫時，添加@Transactional，能確保同時更新多個資料庫
+    // Add @Transactional when operating on multiple tables to ensure all updates are applied together.
     @Transactional
     @Override
     public Integer createOrder(Integer userId, OrderRequest orderRequest) {
-        // 檢查user是否存在
+        // Check whether the user exists.
         User user = userDao.getUserById(userId);
 
         if (user == null) {
@@ -90,14 +90,14 @@ public class OrderServiceImpl implements OrderService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
-            // 更新商品庫存
+            // Update product stock.
             productDao.updateStock(product.getProductId(), product.getStock() - buyItem.getQuantity());
 
-            // 計算總花費
+            // Calculate total cost.
             int cost = product.getPrice() * buyItem.getQuantity();
             totalCost += cost;
             
-            // buyItem 轉換成 orderItem
+            // Convert buyItem into orderItem.
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(buyItem.getProductId());
             orderItem.setQuantity(buyItem.getQuantity());
@@ -106,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemList.add(orderItem);
         }
 
-        // 創建訂單
+        // Create order.
         Integer orderId = orderDao.createOrder(userId, totalCost);
 
         orderDao.createOrderItems(orderId, orderItemList);

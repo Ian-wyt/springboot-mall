@@ -26,20 +26,20 @@ import java.util.List;
 
 @Validated
 @RestController
-@Tag(name = "Product Controller", description = "產品增刪改查相關的 API")
+@Tag(name = "Product Controller", description = "APIs for product CRUD operations")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @Operation(summary = "查詢產品", description = "查詢一筆產品資料")
+    @Operation(summary = "Query product", description = "Query one product record")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "成功找到產品資料"),
-            @ApiResponse(responseCode = "404", description = "產品資料不存在", content = @Content) // @Content 回傳無參數的內容
+            @ApiResponse(responseCode = "200", description = "Product data found successfully"),
+            @ApiResponse(responseCode = "404", description = "Product data does not exist", content = @Content) // @Content returns an empty response body
     })
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(
-            @Parameter(description = "產品 id", example = "101", required = true)
+            @Parameter(description = "Product id", example = "101", required = true)
             @PathVariable Integer productId
     ) {
         Product product = productService.getProductById(productId);
@@ -48,7 +48,7 @@ public class ProductController {
                 : ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
-    @Operation(summary = "查詢產品", description = "建立所有產品資料")
+    @Operation(summary = "Query products", description = "Query all product records")
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> getProducts(
             // Filtering
@@ -71,13 +71,13 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
-        // 取得商品列表
+        // Get product list
         List<Product> productList = productService.getProducts(productQueryParams);
 
-        // 取得商品總筆數
+        // Get total product count
         Integer total = productService.countProducts(productQueryParams);
 
-        // 設定分頁內容
+        // Set pagination content
         Page<Product> page = new Page<>();
         page.setLimit(limit);
         page.setOffset(offset);
@@ -87,32 +87,32 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
-    @Operation(summary = "建立產品", description = "建立一筆產品資料")
+    @Operation(summary = "Create product", description = "Create one product record")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "成功建立產品資料"),
-            @ApiResponse(responseCode = "400", description = "產品資料不符合",
+            @ApiResponse(responseCode = "201", description = "Product data created successfully"),
+            @ApiResponse(responseCode = "400", description = "Product data is invalid",
                     content = @Content(schema = @Schema(implementation = ProductRequest.class)))
     })
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
-        // 回傳auto_increment的id
+        // Return the auto-increment id
         Integer productId = productService.createProduct(productRequest);
         Product product = productService.getProductById(productId);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
-    @Operation(summary = "修改產品", description = "修改一筆產品資料")
+    @Operation(summary = "Update product", description = "Update one product record")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "成功找到產品資料"),
-            @ApiResponse(responseCode = "400", description = "產品資料不符合",
+            @ApiResponse(responseCode = "200", description = "Product data found successfully"),
+            @ApiResponse(responseCode = "400", description = "Product data is invalid",
                     content = @Content(schema = @Schema(implementation = ProductRequest.class))),
-            @ApiResponse(responseCode = "404", description = "產品資料不存在", content = @Content) // @Content 回傳無參數的內容
+            @ApiResponse(responseCode = "404", description = "Product data does not exist", content = @Content) // @Content returns an empty response body
     })
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
 
-        // 先查詢是否有id為productId的資料
+        // First check whether data exists for productId
         Product product = productService.getProductById(productId);
         if (product == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -121,7 +121,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(productId));
     }
 
-    @Operation(summary = "刪除產品", description = "刪除一筆產品資料")
+    @Operation(summary = "Delete product", description = "Delete one product record")
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<Product> deleteProduct(@PathVariable Integer productId) {
         productService.deleteProductById(productId);

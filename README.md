@@ -1,67 +1,67 @@
-## 📖 專案簡介
+## 📖 Project Overview
 
-本專案是一個基於RESTful API的簡易電商系統，提供 **使用者 (Users)**、**商品 (Products)** 及 **訂單 (Orders)** 的管理功能，並針對各個功能進行單元測試以驗證程式碼的正確性，測試覆蓋率達100%。
+This project is a simple e-commerce system based on RESTful APIs. It provides management features for **Users**, **Products**, and **Orders**, with unit tests for each feature to verify correctness. Test coverage reaches 100%.
 
-## 🛠 技術
+## 🛠 Technologies
 
-- **後端框架**：Spring Boot (Java)
-- **資料庫**：MySQL (使用Spring JDBC連接)
-- **單元測試**: MockMvc
-- **API 格式**：RESTful API
+- **Backend framework**: Spring Boot (Java)
+- **Database**: MySQL (connected through Spring JDBC)
+- **Unit testing**: MockMvc
+- **API format**: RESTful API
 
 ## API
 
-### 1️⃣ 使用者 (Users)
+### 1️⃣ Users
 
-#### 註冊使用者
+#### Register User
 ```http
 POST /api/users/register
 ```
-#### 使用者登入
+#### User Login
 ```http
 POST /api/users/login
 ```
 
-### 2️⃣ 商品 (Products)
+### 2️⃣ Products
 
-#### 新增商品
+#### Create Product
 ```http
 POST /api/products
 ```
 
-#### 取得商品列表
+#### Get Product List
 ```http
 GET /api/products
 ```
 
-#### 修改商品
+#### Update Product
 ```http
 PUT /api/products/{productId}
 ```
 
-#### 刪除商品
+#### Delete Product
 ```http
 DELETE /api/products/{productId}
 ```
 
-### 3️⃣ 訂單 (Orders)
+### 3️⃣ Orders
 
-#### 創建訂單 
+#### Create Order
 
 ```http
 POST /api/users/{userId}/orders
 ```
 
-#### 查詢訂單 
+#### Query Orders
 
 ```http
 GET /api//users/{userId}/orders
 ```
 
-## 📜 未來延伸
+## 📜 Future Enhancements
 
-- 引入JWT授權 JSON 檔案
-- 引入Microservices架構
+- Introduce JWT authorization JSON files
+- Introduce a microservices architecture
 
 
 

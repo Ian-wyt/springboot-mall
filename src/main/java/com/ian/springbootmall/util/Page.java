@@ -4,8 +4,8 @@ import com.ian.springbootmall.model.Product;
 
 import java.util.List;
 
-//  Java 泛型（Generics）中，<T>是類型參數（Type Parameter）
-//  允許我們在定義時不需要指定具體的類型
+// In Java generics, <T> is a type parameter.
+// It lets us define the class without specifying a concrete type up front.
 public class Page<T> {
 
     private Integer limit;

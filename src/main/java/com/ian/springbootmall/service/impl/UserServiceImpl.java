@@ -28,35 +28,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
-        // 確認email是否被註冊過
+        // Check whether the email has already been registered.
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
-        // 回傳400錯誤碼，前端的請求參數有誤
+        // Return 400 when the client request parameters are invalid.
         if (user != null) {
             log.warn("The email {} is already registered.", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // 使用MD5生成password的hash value
+        // Use MD5 to generate the password hash value.
         String hashPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
         userRegisterRequest.setPassword(hashPassword);
 
-        // 註冊帳號
+        // Register the account.
         return userDao.createUser(userRegisterRequest);
     }
 
     @Override
     public User login(UserLoginRequest userLoginRequest) {
-        // 取得user資料
+        // Get user data.
         User user = userDao.getUserByEmail(userLoginRequest.getEmail());
 
-        // 檢查user是否存在
+        // Check whether the user exists.
         if (user == null) {
             log.warn("The email {} is not registered.", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // 檢查password是否正確
+        // Check whether the password is correct.
         String hashPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
         if (hashPassword.equals(user.getPassword())) {
             return user;

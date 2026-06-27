@@ -27,7 +27,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
 
-        //  RowMapper：將資料庫查詢出來的數據轉換成Java Object
+        // RowMapper converts database query results into Java objects.
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         if (productList.isEmpty()) {
@@ -39,17 +39,17 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {
-        // WHERE 1=1 能讓sql更加自由地拼接查詢情況
+        // WHERE 1=1 makes it easier to append query conditions dynamically.
         String sql = "SELECT * FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
 
         sql = addFilteringSql(sql, map, productQueryParams);
 
-        // 設定排列的依據，只能透過string的拼接實現，不能利用map
+        // Set the sort expression through string concatenation; it cannot be supplied through the map.
         sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
 
-        // 設定回傳的筆數及跳過多少數據
+        // Set the number of returned rows and how many rows to skip.
         sql += " LIMIT " + productQueryParams.getLimit() + " OFFSET " + productQueryParams.getOffset();
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
@@ -66,7 +66,7 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
         map.put("productName", productRequest.getProductName());
-        map.put("category", productRequest.getCategory().toString());  // Enum類型記得要轉換為string
+        map.put("category", productRequest.getCategory().toString());  // Remember to convert enum values to strings.
         map.put("imageUrl", productRequest.getImageUrl());
         map.put("price", productRequest.getPrice());
         map.put("stock", productRequest.getStock());
@@ -76,10 +76,10 @@ public class ProductDaoImpl implements ProductDao {
         map.put("createdDate", now);
         map.put("lastModifiedDate", now);
 
-        // 儲存自動生成的id
+        // Store the generated id.
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // SQL查詢或新增參數較多、類型較複雜，或需要動態添加參數時，建議使用 MapSqlParameterSource。
+        // Use MapSqlParameterSource when SQL queries or inserts have many parameters, complex types, or dynamic parameters.
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
 
         int productId = Objects.requireNonNull(keyHolder.getKey()).intValue();
@@ -137,25 +137,25 @@ public class ProductDaoImpl implements ProductDao {
 
         sql = addFilteringSql(sql, map, productQueryParams);
 
-        // 利用queryForObject，並將值直接轉成Integer.class
+        // Use queryForObject and convert the value directly to Integer.class.
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
         return total;
     }
 
-    // 設定sql的查詢條件
+    // Set SQL query conditions.
     private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
 
-        // 加入category去搜索資料
+        // Add category to filter data.
         if (productQueryParams.getCategory() != null) {
             sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name()); // enum類型需使用name()去取得string
+            map.put("category", productQueryParams.getCategory().name()); // Use name() to get the string value for enum types.
         }
 
-        // 根據用戶的搜尋關鍵字去搜索資料
+        // Filter data by the user's search keyword.
         if (productQueryParams.getSearch() != null) {
             sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // %用於模糊查詢
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // % is used for fuzzy matching.
         }
 
         return sql;
