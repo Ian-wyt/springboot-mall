@@ -24,13 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    public UserControllerTest(MockMvc mockMvc, UserDao userDao) {
+        this.mockMvc = mockMvc;
+        this.userDao = userDao;
+    }
 
     // Register a new account
     @Test

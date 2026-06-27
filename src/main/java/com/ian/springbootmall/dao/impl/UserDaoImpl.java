@@ -4,7 +4,6 @@ import com.ian.springbootmall.dao.UserDao;
 import com.ian.springbootmall.dto.UserRegisterRequest;
 import com.ian.springbootmall.model.User;
 import com.ian.springbootmall.rowmapper.UserRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -16,8 +15,11 @@ import java.util.*;
 @Component
 public class UserDaoImpl implements UserDao {
 
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public UserDaoImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     @Override
     public User getUserById(Integer userId) {

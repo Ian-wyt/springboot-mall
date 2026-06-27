@@ -23,10 +23,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    public ProductControllerTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
     // Query product success case
     @Test

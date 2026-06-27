@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,8 +28,11 @@ import java.util.List;
 @Tag(name = "Product Controller", description = "APIs for product CRUD operations")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @Operation(summary = "Query product", description = "Query one product record")
     @ApiResponses({
@@ -112,7 +114,6 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
 
-        // First check whether data exists for productId
         Product product = productService.getProductById(productId);
         if (product == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

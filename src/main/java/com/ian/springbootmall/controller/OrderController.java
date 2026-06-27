@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +20,16 @@ import java.util.List;
 @Tag(name = "Order Controller", description = "APIs for creating and querying orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @Operation(summary = "Get user orders", description = "Get all order data for a user")
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<Page<Order>> getOrders(
             @PathVariable Integer userId,
-
-            // Pagination
             @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
             @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ){
@@ -38,13 +38,9 @@ public class OrderController {
         orderQueryParams.setLimit(limit);
         orderQueryParams.setOffset(offset);
 
-        // Get order list
         List<Order> orderList = orderService.getOrders(orderQueryParams);
-
-        // Get total order count
         Integer total = orderService.countOrders(orderQueryParams);
 
-        // Set pagination content
         Page<Order> page = new Page<>();
         page.setLimit(limit);
         page.setOffset(offset);

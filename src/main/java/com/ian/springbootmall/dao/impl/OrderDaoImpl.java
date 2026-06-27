@@ -6,7 +6,6 @@ import com.ian.springbootmall.model.Order;
 import com.ian.springbootmall.model.OrderItem;
 import com.ian.springbootmall.rowmapper.OrderItemRowMapper;
 import com.ian.springbootmall.rowmapper.OrderRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,8 +17,11 @@ import java.util.*;
 @Repository
 public class OrderDaoImpl implements OrderDao {
 
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public OrderDaoImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {

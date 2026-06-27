@@ -13,7 +13,6 @@ import com.ian.springbootmall.model.User;
 import com.ian.springbootmall.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +26,17 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    @Autowired
-    private OrderDao orderDao;
+    private final OrderDao orderDao;
 
-    @Autowired
-    private ProductDao productDao;
+    private final ProductDao productDao;
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
+
+    public OrderServiceImpl(OrderDao orderDao, ProductDao productDao, UserDao userDao) {
+        this.orderDao = orderDao;
+        this.productDao = productDao;
+        this.userDao = userDao;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {

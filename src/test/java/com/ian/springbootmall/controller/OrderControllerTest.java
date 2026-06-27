@@ -24,10 +24,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class OrderControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    public OrderControllerTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
     // Create order
     @Transactional
