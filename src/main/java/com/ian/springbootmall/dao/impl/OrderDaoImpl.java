@@ -48,17 +48,13 @@ public class OrderDaoImpl implements OrderDao {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", orderQueryParams.getUserId());
 
-        // sorting
         sql = sql + " ORDER BY created_date DESC";
 
-        // pagination
         sql = sql + " LIMIT :limit OFFSET :offset";
         map.put("limit", orderQueryParams.getLimit());
         map.put("offset", orderQueryParams.getOffset());
 
-        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
-
-        return orderList;
+        return namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
     }
 
     @Override
@@ -83,10 +79,8 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Integer countOrders(OrderQueryParams orderQueryParams) {
         String sql = "SELECT count(*) FROM `order` WHERE user_id = :userId";
-
         Map<String, Object> map = new HashMap<>();
         map.put("userId", orderQueryParams.getUserId());
-
         return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
     }
 
@@ -98,18 +92,13 @@ public class OrderDaoImpl implements OrderDao {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("totalCost", totalCost);
-
         Date now = new Date();
         map.put("createdDate", now);
         map.put("lastModifiedDate", now);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
-
-        int orderId = Objects.requireNonNull(keyHolder.getKey()).intValue();
-
-        return orderId;
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override
@@ -117,7 +106,6 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "INSERT INTO order_item(order_id, product_id, quantity, cost) " +
                 "VALUES (:orderId, :productId, :quantity, :cost)";
 
-        // Use batchUpdate to insert data in one operation.
         MapSqlParameterSource[] parameterSources = new MapSqlParameterSource[orderItemList.size()];
 
         for (int i = 0; i < orderItemList.size(); i++) {

@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -66,13 +67,10 @@ public class OrderServiceImpl implements OrderService {
         return orderList;
     }
 
-    // Add @Transactional when operating on multiple tables to ensure all updates are applied together.
-    @Transactional
     @Override
     public Integer createOrder(Integer userId, OrderRequest orderRequest) {
-        // Check whether the user exists.
-        User user = userDao.getUserById(userId);
 
+        User user = userDao.getUserById(userId);
         if (user == null) {
             log.warn("The userId {} is not exist", userId);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -80,7 +78,6 @@ public class OrderServiceImpl implements OrderService {
 
         int totalCost = 0;
         List<OrderItem> orderItemList = new ArrayList<>();
-
         for (BuyItem buyItem : orderRequest.getBuyItems()) {
             Product product = productDao.getProductById(buyItem.getProductId());
 
@@ -92,27 +89,18 @@ public class OrderServiceImpl implements OrderService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
-            // Update product stock.
             productDao.updateStock(product.getProductId(), product.getStock() - buyItem.getQuantity());
-
-            // Calculate total cost.
             int cost = product.getPrice() * buyItem.getQuantity();
             totalCost += cost;
-            
-            // Convert buyItem into orderItem.
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(buyItem.getProductId());
             orderItem.setQuantity(buyItem.getQuantity());
             orderItem.setCost(cost);
-
             orderItemList.add(orderItem);
         }
 
-        // Create order.
         Integer orderId = orderDao.createOrder(userId, totalCost);
-
         orderDao.createOrderItems(orderId, orderItemList);
-
         return orderId;
     }
 }

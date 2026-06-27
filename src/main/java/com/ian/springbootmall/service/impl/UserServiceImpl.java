@@ -30,35 +30,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
-        // Check whether the email has already been registered.
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
-
-        // Return 400 when the client request parameters are invalid.
         if (user != null) {
             log.warn("The email {} is already registered.", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // Use MD5 to generate the password hash value.
         String hashPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
         userRegisterRequest.setPassword(hashPassword);
-
-        // Register the account.
         return userDao.createUser(userRegisterRequest);
     }
 
     @Override
     public User login(UserLoginRequest userLoginRequest) {
-        // Get user data.
         User user = userDao.getUserByEmail(userLoginRequest.getEmail());
-
-        // Check whether the user exists.
         if (user == null) {
             log.warn("The email {} is not registered.", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        // Check whether the password is correct.
         String hashPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
         if (hashPassword.equals(user.getPassword())) {
             return user;

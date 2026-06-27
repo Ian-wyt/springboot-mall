@@ -29,34 +29,17 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
 
-        // RowMapper converts database query results into Java objects.
-        List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
-
-        if (productList.isEmpty()) {
-            return null;
-        } else {
-            return productList.get(0);
-        }
+        return namedParameterJdbcTemplate.queryForObject(sql, map, new ProductRowMapper());
     }
 
     @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {
-        // WHERE 1=1 makes it easier to append query conditions dynamically.
         String sql = "SELECT * FROM product WHERE 1=1";
-
         Map<String, Object> map = new HashMap<>();
-
         sql = addFilteringSql(sql, map, productQueryParams);
-
-        // Set the sort expression through string concatenation; it cannot be supplied through the map.
         sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
-
-        // Set the number of returned rows and how many rows to skip.
         sql += " LIMIT " + productQueryParams.getLimit() + " OFFSET " + productQueryParams.getOffset();
-
-        List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
-
-        return productList;
+        return namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
     }
 
     @Override
@@ -73,20 +56,13 @@ public class ProductDaoImpl implements ProductDao {
         map.put("price", productRequest.getPrice());
         map.put("stock", productRequest.getStock());
         map.put("description", productRequest.getDescription());
-
         Date now = new Date();
         map.put("createdDate", now);
         map.put("lastModifiedDate", now);
 
-        // Store the generated id.
         KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        // Use MapSqlParameterSource when SQL queries or inserts have many parameters, complex types, or dynamic parameters.
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
-
-        int productId = Objects.requireNonNull(keyHolder.getKey()).intValue();
-
-        return productId;
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override
@@ -134,32 +110,20 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Integer countProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT count(*) FROM product WHERE 1=1";
-
         Map<String, Object> map = new HashMap<>();
-
         sql = addFilteringSql(sql, map, productQueryParams);
-
-        // Use queryForObject and convert the value directly to Integer.class.
-        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
-
-        return total;
+        return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
     }
 
-    // Set SQL query conditions.
     private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
-
-        // Add category to filter data.
         if (productQueryParams.getCategory() != null) {
             sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name()); // Use name() to get the string value for enum types.
+            map.put("category", productQueryParams.getCategory().name());
         }
-
-        // Filter data by the user's search keyword.
         if (productQueryParams.getSearch() != null) {
             sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // % is used for fuzzy matching.
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
-
         return sql;
     }
 }
